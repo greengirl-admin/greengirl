@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+// Certifique-se de que useAuth exporta 'loading'
+import { AuthProvider, useAuth } from './contexts/AuthContext'; 
 import MainLayout from './layouts/MainLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -11,20 +12,23 @@ import Users from './pages/Users';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 
-// Componente PrivateRoute ajustado para esperar pelo estado 'loading'
 const PrivateRoute = ({ children, roles }) => {
-  const { user, isAuthenticated, loading } = useAuth(); // <--- Ajuste: Inclui 'loading'
+  // 1. INCLUSÃO CRÍTICA: Pega o estado de carregamento
+  const { user, isAuthenticated, loading } = useAuth(); 
 
-  // 1. ESPERA: Se a autenticação ainda está em andamento, não faça nada.
-  // Isso evita o redirecionamento imediato para /login.
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Aguardando autenticação...</div>;
-  }
+  // 2. VERIFICAÇÃO DE CARREGAMENTO: Se estiver carregando, espere.
+  // Isso previne o redirecionamento imediato para /login.
+  if (loading) {
+    // Usa o loader simples, pois o AuthProvider já deve estar mostrando um loader em tela cheia.
+    return <div className="min-h-screen flex items-center justify-center">Aguardando autenticação...</div>;
+  }
 
+  // 3. VERIFICAÇÃO DE AUTENTICAÇÃO: Redireciona se não estiver autenticado (só após o loading)
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
+  // 4. VERIFICAÇÃO DE PERMISSÃO (ROLES):
   if (roles && (!user || !user.role || !roles.includes(user.role))) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -34,15 +38,24 @@ const PrivateRoute = ({ children, roles }) => {
 
 
 const AppRoutes = () => {
-  const { isAuthenticated, loading } = useAuth(); // Usar loading aqui também pode ser útil, mas PrivateRoute é o mais crítico.
+  // Pega o estado de loading também
+  const { isAuthenticated, loading } = useAuth(); 
 
   return (
     <Routes>
-      {/* Rota de Login: Redireciona para o Dashboard se o usuário estiver autenticado e o loading for false */}
       <Route 
         path="/login" 
-        element={!isAuthenticated && !loading ? <Login /> : (isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />)} 
-      /> 
+        element={
+          // Se estiver carregando, retorne nulo (o AuthProvider está mostrando o loader).
+          loading 
+            ? null 
+            // Se não estiver autenticado, mostre o Login.
+            : !isAuthenticated 
+              ? <Login /> 
+              // Caso contrário, redirecione.
+              : <Navigate to="/dashboard" replace />
+        } 
+      />
       <Route 
         path="/" 
         element={
