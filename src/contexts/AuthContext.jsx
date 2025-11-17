@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
       const sessionUser = session ? await getSessionUser() : null;
       setUser(sessionUser);
       setIsAuthenticated(!!sessionUser);
+      setLoading(false);
     });
 
     return () => {

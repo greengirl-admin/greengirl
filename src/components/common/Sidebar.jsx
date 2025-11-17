@@ -11,15 +11,18 @@ const navItems = [
     { name: 'Usuários', path: '/users', icon: Users, role: 'super-user' },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     const { user } = useAuth();
     
     return (
-        <div className="w-64 bg-brand-green-dark text-white flex flex-col">
+        // Base width is w-64, but it can be hidden with -translate-x-full
+        // The transition-all duration-300 ensures smooth animation
+        // md:relative md:translate-x-0 ensures it's always visible and positioned correctly on medium screens and up
+        <div className={`w-64 bg-brand-green-dark text-white flex flex-col fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0`}>
             <div className="h-16 flex items-center justify-center text-2xl font-bold">
                 GreenGirl
             </div>
-            <nav className="flex-1 px-4 py-4 space-y-2">
+            <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
                 {navItems.map(item => (
                     (!item.role || item.role === user.role) && (
                         <NavLink
@@ -27,7 +30,7 @@ const Sidebar = () => {
                             to={item.path}
                             className={({ isActive }) => 
                                 `flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200 ${
-                                    isActive ? 'bg-brand-green text-white' : 'hover:bg-brand-green'
+                                    isActive ? 'bg-brand-green text-white' : 'hover:bg-brand-green-light'
                                 }`
                             }
                         >

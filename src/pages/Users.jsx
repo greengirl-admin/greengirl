@@ -21,10 +21,10 @@ const Users = () => {
     };
 
     useEffect(() => {
-        if (isAuthenticated && !isSessionLoading) {
+        if (isAuthenticated) {
             loadUsers();
         }
-    }, [isAuthenticated, isSessionLoading]);
+    }, [isAuthenticated]);
 
     const handleSaveUser = async (userData) => {
         const { error } = await addUser(userData);
@@ -90,10 +90,10 @@ const Users = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Gerenciamento de Usuários</h1>
-                <button onClick={() => setIsUserModalOpen(true)} className="flex items-center gap-2 bg-brand-green text-white px-4 py-2 rounded-lg shadow hover:bg-brand-green-dark transition-colors">
-                    <PlusCircle size={20} />
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4">
+                <h1 className="text-2xl sm:text-3xl font-bold">Gerenciamento de Usuários</h1>
+                <button onClick={() => setIsUserModalOpen(true)} className="flex items-center gap-2 bg-brand-green text-white px-3 py-2 rounded-lg shadow hover:bg-brand-green-dark transition-colors text-sm sm:text-base w-full sm:w-auto justify-center">
+                    <PlusCircle size={18} />
                     Novo Usuário
                 </button>
             </div>

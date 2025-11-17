@@ -9,9 +9,11 @@ const StorageGauge = ({ type, unit, isEditable = true }) => {
     const [maxCapacity, setMaxCapacity] = useState(100);
     const [isEditing, setIsEditing] = useState(false);
     const [newCapacity, setNewCapacity] = useState(maxCapacity);
-    const { user, isAuthenticated, isSessionLoading } = useAuth();
+    const { user, isAuthenticated } = useAuth(); // Removed isSessionLoading
 
     const loadData = async () => {
+        if (!isAuthenticated) return; // Early return if not authenticated
+
         const [materials, config] = await Promise.all([
             fetchMaterials(),
             fetchStorageConfig()
@@ -33,10 +35,10 @@ const StorageGauge = ({ type, unit, isEditable = true }) => {
     };
 
     useEffect(() => {
-        if (isAuthenticated && !isSessionLoading) {
+        if (isAuthenticated) {
             loadData();
         }
-    }, [type, isAuthenticated, isSessionLoading]);
+    }, [type, isAuthenticated]); // Removed isSessionLoading
 
     const percentage = maxCapacity > 0 ? Math.min((currentAmount / maxCapacity) * 100, 100) : 0;
     

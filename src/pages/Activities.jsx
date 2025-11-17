@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { fetchActivities, deleteActivity, fetchProjects, fetchActivityTypes, fetchUsers } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { PlusCircle, Edit, Trash2, ArrowUpDown, FileDown } from 'lucide-react';
@@ -21,6 +21,7 @@ const Activities = () => {
     const [users, setUsers] = useState([]);
 
     const [filters, setFilters] = useState({ project: '', type: '', user: '', startDate: '', endDate: '' });
+    const memoizedFilters = useMemo(() => filters, [filters]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -58,7 +59,7 @@ const Activities = () => {
         });
         setFilteredActivities(data);
         setCurrentPage(1);
-    }, [filters, activities]);
+    }, [memoizedFilters, activities]);
 
     const handleOpenModal = (activity = null) => { setSelectedActivity(activity); setIsModalOpen(true); };
     const handleCloseModal = () => { setIsModalOpen(false); setSelectedActivity(null); };

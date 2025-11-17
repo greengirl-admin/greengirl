@@ -27,13 +27,13 @@ const Reports = () => {
             setAllMaterials(materialsData);
             setAllActivities(activitiesData);
         };
-        if (isAuthenticated && user && !isSessionLoading) {
+        if (isAuthenticated && user) {
             loadData();
         } else if (!isAuthenticated) {
             setAllMaterials([]);
             setAllActivities([]);
         }
-    }, [user, isAuthenticated, isSessionLoading]);
+    }, [user, isAuthenticated]);
 
     useEffect(() => {
         const now = new Date();
